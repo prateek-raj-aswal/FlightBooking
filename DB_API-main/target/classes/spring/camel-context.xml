@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:camel="http://camel.apache.org/schema/spring"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+    http://www.springframework.org/schema/beans/spring-beans.xsd http://camel.apache.org/schema/spring 
+    http://camel.apache.org/schema/spring/camel-spring.xsd http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
+   
+    <bean class="org.apache.commons.dbcp.BasicDataSource" id="dataStore">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="url" value="${db_url}"/>
+        <property name="username" value="${db_username}"/>
+        <property name="password" value="${db_password}"/>
+        <property name="maxWait" value="${db_maxWait}"/>
+    </bean>
+    
+    <bean class="com.example.Processing" id="process">
+        <property name="dataSource" ref="dataStore"/>
+    </bean>
+    
+    <camelContext id="Airlines_db_Context" xmlns="http://camel.apache.org/schema/spring" streamCache="true" >
+        <dataFormats>
+		   <json id="jsonOrder" library="Jackson"/>
+		</dataFormats>
+		
+        <restConfiguration 
+            component="jetty" 
+            host="0.0.0.0" 
+            port="8501"
+            bindingMode="json"
+            enableCORS="true" contextPath="/api/v1">
+	    <apiProperty key="Access-Control-Allow-Origin" value="http://localhost:4200*"/>
+            <apiProperty key="Access-Control-Allow-Headers" value="Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization"/>
+        </restConfiguration>
+
+        <rest id="DB API">	
+            <post uri="/getAirports">
+                <route id="Get_Airport_Stations">
+                    <doTry>
+                        <log message="Hit Received at ${date:now:yyyy-MM-dd'T'HH:mm:ss:SSS}"/>
+		                <bean ref="process" method="getAirportList"/>
+		                <!-- <marshal ref="jsonOrder"/> -->
+                        <setHeader headerName="Content-Type"><simple>application/json</simple></setHeader>
+                        <log message="Hit Processed at ${date:now:yyyy-MM-dd'T'HH:mm:ss:SSS} ${body}"/>
+                        <doCatch>
+                            <exception>java.lang.RuntimeException</exception>
+                            <removeHeaders pattern="*"/>
+                            <setHeader headerName="Content-Type"><simple>application/json</simple></setHeader>
+                            <setBody><simple>{"Status":"Failed","Messaage":"${exception.message}"}</simple></setBody>
+                            <unmarshal ref="jsonOrder"/>
+                            <setHeader headerName="CamelRestletResponse"><simple>${body}</simple></setHeader>
+                        </doCatch>
+			            <doCatch>
+          	            	<exception>java.lang.Exception</exception>
+        	            	<removeHeaders pattern="*"/>
+                            <setHeader headerName="Content-Type"><simple>application/json</simple></setHeader>
+                            <setBody><simple>{"Status":"Failed","Messaage":"${exception.message}"}</simple></setBody>
+                            <unmarshal ref="jsonOrder"/>
+                            <setHeader headerName="CamelRestletResponse"><simple>${body}</simple></setHeader>
+			            </doCatch>
+     		        </doTry>        
+    	        </route>
+            </post>
+            <!-- API for submitting feedback-->
+
+            <post uri="/submitFeedback">
+                <route id="Submit_Feedback">
+                    <doTry>
+                        <log message="Hit Received at ${date:now:yyyy-MM-dd'T'HH:mm:ss:SSS} ${body}"/>
+		                <bean ref="process" method="insertFeedback"/>
+		                <!-- <marshal ref="jsonOrder"/> -->
+                        <setHeader headerName="Content-Type"><simple>application/json</simple></setHeader>
+                        <log message="Hit Processed at ${date:now:yyyy-MM-dd'T'HH:mm:ss:SSS} ${body}"/>
+                        <doCatch>
+                            <exception>java.lang.RuntimeException</exception>
+                            <removeHeaders pattern="*"/>
+                            <setHeader headerName="Content-Type"><simple>application/json</simple></setHeader>
+                            <setBody><simple>{"Status":"Failed","Messaage":"${exception.message}"}</simple></setBody>
+                            <unmarshal ref="jsonOrder"/>
+                            <setHeader headerName="CamelRestletResponse"><simple>${body}</simple></setHeader>
+                        </doCatch>
+			            <doCatch>
+          	            	<exception>java.lang.Exception</exception>
+        	            	<removeHeaders pattern="*"/>
+                            <setHeader headerName="Content-Type"><simple>application/json</simple></setHeader>
+                            <setBody><simple>{"Status":"Failed","Messaage":"${exception.message}"}</simple></setBody>
+                            <unmarshal ref="jsonOrder"/>
+                            <setHeader headerName="CamelRestletResponse"><simple>${body}</simple></setHeader>
+			            </doCatch>
+     		        </doTry>        
+    	        </route>
+            </post>
+
+            <!-- API for searching flights-->
+
+            <post uri="/searchFlights">
+                <route id="Search Flights">
+                    <doTry>
+                        <log message="Hit Received at ${date:now:yyyy-MM-dd'T'HH:mm:ss:SSS} ${body}"/>
+		                <bean ref="process" method="searchFlight"/>
+		                <!-- <marshal ref="jsonOrder"/> -->
+                        <setHeader headerName="Content-Type"><simple>application/json</simple></setHeader>
+                        <log message="Hit Processed at ${date:now:yyyy-MM-dd'T'HH:mm:ss:SSS} ${body}"/>
+                        <doCatch>
+                            <exception>java.lang.RuntimeException</exception>
+                            <removeHeaders pattern="*"/>
+                            <setHeader headerName="Content-Type"><simple>application/json</simple></setHeader>
+                            <setBody><simple>{"Status":"Failed","Messaage":"${exception.message}"}</simple></setBody>
+                            <unmarshal ref="jsonOrder"/>
+                            <setHeader headerName="CamelRestletResponse"><simple>${body}</simple></setHeader>
+                        </doCatch>
+			            <doCatch>
+          	            	<exception>java.lang.Exception</exception>
+        	            	<removeHeaders pattern="*"/>
+                            <setHeader headerName="Content-Type"><simple>application/json</simple></setHeader>
+                            <setBody><simple>{"Status":"Failed","Messaage":"${exception.message}"}</simple></setBody>
+                            <unmarshal ref="jsonOrder"/>
+                            <setHeader headerName="CamelRestletResponse"><simple>${body}</simple></setHeader>
+			            </doCatch>
+     		        </doTry>        
+    	        </route>
+            </post>
+
+            <!-- API for booking flights-->
+
+            <post uri="/bookFlight">
+                <route id="Book Flights">
+                    <doTry>
+                        <log message="Hit Received at ${date:now:yyyy-MM-dd'T'HH:mm:ss:SSS} ${body}"/>
+		                <bean ref="process" method="bookTicket"/>
+		                <!-- <marshal ref="jsonOrder"/> -->
+                        <setHeader headerName="Content-Type"><simple>application/json</simple></setHeader>
+                        <log message="Hit Processed at ${date:now:yyyy-MM-dd'T'HH:mm:ss:SSS} ${body}"/>
+                        <doCatch>
+                            <exception>java.lang.RuntimeException</exception>
+                            <removeHeaders pattern="*"/>
+                            <setHeader headerName="Content-Type"><simple>application/json</simple></setHeader>
+                            <setBody><simple>{"Status":"Failed","Messaage":"${exception.message}"}</simple></setBody>
+                            <unmarshal ref="jsonOrder"/>
+                            <setHeader headerName="CamelRestletResponse"><simple>${body}</simple></setHeader>
+                        </doCatch>
+			            <doCatch>
+          	            	<exception>java.lang.Exception</exception>
+        	            	<removeHeaders pattern="*"/>
+                            <setHeader headerName="Content-Type"><simple>application/json</simple></setHeader>
+                            <setBody><simple>{"Status":"Failed","Messaage":"${exception.message}"}</simple></setBody>
+                            <unmarshal ref="jsonOrder"/>
+                            <setHeader headerName="CamelRestletResponse"><simple>${body}</simple></setHeader>
+			            </doCatch>
+     		        </doTry>        
+    	        </route>
+            </post>
+
+            <!-- API for checking flight status-->
+
+            <post uri="/checkStatus">
+                <route id="Check Status">
+                    <doTry>
+                        <log message="Hit Received at ${date:now:yyyy-MM-dd'T'HH:mm:ss:SSS} ${body}"/>
+		                <bean ref="process" method="checkStatus"/>
+                        <setHeader headerName="Content-Type"><simple>application/json</simple></setHeader>
+                        <log message="Hit Processed at ${date:now:yyyy-MM-dd'T'HH:mm:ss:SSS} ${body}"/>
+                        <doCatch>
+                            <exception>java.lang.RuntimeException</exception>
+                            <removeHeaders pattern="*"/>
+                            <setHeader headerName="Content-Type"><simple>application/json</simple></setHeader>
+                            <setBody><simple>{"Status":"Failed","Messaage":"${exception.message}"}</simple></setBody>
+                            <unmarshal ref="jsonOrder"/>
+                            <setHeader headerName="CamelRestletResponse"><simple>${body}</simple></setHeader>
+                        </doCatch>
+			            <doCatch>
+          	            	<exception>java.lang.Exception</exception>
+        	            	<removeHeaders pattern="*"/>
+                            <setHeader headerName="Content-Type"><simple>application/json</simple></setHeader>
+                            <setBody><simple>{"Status":"Failed","Messaage":"${exception.message}"}</simple></setBody>
+                            <unmarshal ref="jsonOrder"/>
+                            <setHeader headerName="CamelRestletResponse"><simple>${body}</simple></setHeader>
+			            </doCatch>
+     		        </doTry>        
+    	        </route>
+            </post>
+        </rest>
+    </camelContext>
+</beans>

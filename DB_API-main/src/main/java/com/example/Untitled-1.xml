@@ -1,0 +1,159 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+ <parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.6.7</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	
+  <groupId>com.example</groupId>
+  <artifactId>LoanApplication_API</artifactId>
+  <version>1.0.0</version>
+  
+  <properties>
+		<java.version>1.8</java.version>
+		<camel.version>3.14.3</camel.version>
+	</properties>
+
+<dependencies>
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter</artifactId>
+	</dependency>
+<!-- https://mvnrepository.com/artifact/org.apache.camel.springboot/camel-spring-boot-starter -->
+<dependency>
+    <groupId>org.apache.camel.springboot</groupId>
+    <artifactId>camel-spring-boot-starter</artifactId>
+    <version>${camel.version}</version>
+</dependency>
+
+
+<dependency>
+		    <groupId>org.apache.camel</groupId>
+		    <artifactId>camel-jackson</artifactId>
+		    <version>${camel.version}</version>
+		</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-jdbc</artifactId>
+    <version>${camel.version}</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-core</artifactId>
+    <version>${camel.version}</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-spring</artifactId>
+    <version>${camel.version}</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+<dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-stream</artifactId>
+        <version>${camel.version}</version>
+    </dependency>
+   
+ <!-- https://mvnrepository.com/artifact/org.apache.camel/camel-restlet -->
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-restlet</artifactId>
+    <version>3.0.0-RC2</version>
+</dependency>
+
+
+	<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+   <dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-test-spring</artifactId>
+			<version>${camel.version}</version>
+			<scope>test</scope>
+	</dependency>
+	<dependency>
+    	<groupId>mysql</groupId>
+    	<artifactId>mysql-connector-java</artifactId>
+    </dependency>
+    	<!-- https://mvnrepository.com/artifact/postgresql/postgresql -->
+<dependency>
+    <groupId>postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+    <version>9.1-901-1.jdbc4</version>
+</dependency>
+
+<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>8.0.29</version>
+</dependency>
+
+    	
+     <dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<version>1.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-pool</groupId>
+			<artifactId>commons-pool</artifactId>
+			<version>1.5.4</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.infinispan/infinispan-client-hotrod -->
+<dependency>
+    <groupId>org.infinispan</groupId>
+    <artifactId>infinispan-client-hotrod</artifactId>
+    <version>11.0.4.Final</version>
+</dependency>
+ <dependency>
+	         <groupId>org.infinispan</groupId>
+	         <artifactId>infinispan-commons</artifactId>
+	         <version>11.0.4.Final</version>
+	 </dependency>
+	
+        <dependency>
+			<groupId>org.infinispan</groupId>
+			<artifactId>infinispan-remote-query-client</artifactId>
+			<version>11.0.4.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.infinispan</groupId>
+			<artifactId>infinispan-query-dsl</artifactId>
+			<version>11.0.4.Final</version>
+		</dependency>
+	<!-- <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency> -->
+		
+</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
